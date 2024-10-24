@@ -1,0 +1,59 @@
+name: ARCHE CI/CD Finish Action
+description: Pushes the docker image to the repository, redeploys the service on the ACDH cluster and pushes the code coverage reports
+inputs:
+  pushAndRedeploy:
+    type: boolean
+    required: true
+    default: false
+  dockerhubLogin:
+    required: false
+  dockehubPassword:
+    required: false
+  imageName:
+    required: false
+  imageTag:
+    required: false
+    default: latest
+  rancherBaseUrl:
+    required: false
+    default: https://rancher.acdh-dev.oeaw.ac.at/v3
+  rancherProject:
+    required: false
+  rancherNamespace:
+    required: false
+  rancherToken:
+    required: false
+  coverallsToken:
+    required: false
+  cloverPath:
+    required: false
+    default: build/logs/clover.xml
+runs:
+  using: composite
+  steps:
+  - name: login into docker hub
+    if: inputs.pushAndRedeploy
+    uses: docker/login-action@v3
+      with:
+        username: ${{ inputs.dockerhubLogin }}
+        password: ${{ inputs.dockehubPassword }}
+  - name: push to docker hub
+    if: inputs.pushAndRedeploy
+    run: docker push "acdhch/${{ inputs.imageName }}:${{ inputs.imageTag }}"
+  - name: redeploy on rancher
+    if: inputs.pushAndRedeploy
+    run: |
+      BASE_URL=`curl -s -H "Authorization: Bearer ${{ inputs.rancherToken }}" "${{ inputs.rancherBaseUrl }}/projects" | jq -r ".data[] | select(.name == \"${{ inputs.rancherProject }}\") | .links.workloads"`
+          curl -i -X POST -H "Authorization: Bearer ${{ inputs.rancherToken }}" "$BASE_URL/deployment:${{ inputs.rancherNamespace }}:${{ inputs.rancherNamespace }}?action=redeploy"
+  - name: coveralls
+    if: ${{ inputs.coverallsToken != '' }}
+    run: |
+      export COVERALLS_RUN_LOCALLY=1
+      export COVERALLS_REPO_TOKEN=${{ inputs.coverallsToken }}
+      rm -fR composer.json composer.lock vendor
+      composer require php-coveralls/php-coveralls
+      php vendor/bin/php-coveralls -v -x ${{ inputs.cloverPath }}
+
+
+
+
