@@ -10,7 +10,7 @@ Packs in one action all the steps done at the end of an ARCHE microservices buil
 Use with something like:
 
 ```yaml
-  uses: acdh-oeaw/arche_cicd_finish_action@0.1
+- uses: acdh-oeaw/arche_cicd_finish_action@0.1
   with:
     pushAndRedeploy: ${{ github.event_name == 'release' && github.event.action == 'published' || inputs.deploy }}
     dockerhubLogin: ${{ secrets.DOCKER_USERNAME }}
@@ -28,7 +28,7 @@ Use with something like:
 or if default parameter values are fine:
 
 ```yaml
-  uses: acdh-oeaw/arche_cicd_finish_action@0.1
+- uses: acdh-oeaw/arche_cicd_finish_action@0.1
   with:
     pushAndRedeploy: ${{ github.event_name == 'release' && github.event.action == 'published' || inputs.deploy }}
     dockerhubLogin: ${{ secrets.DOCKER_USERNAME }}
