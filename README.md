@@ -10,7 +10,7 @@ Packs in one action all the steps done at the end of an ARCHE microservices buil
 Use with something like:
 
 ```yaml
-- uses: acdh-oeaw/arche_cicd_finish_action@0.1
+- uses: acdh-oeaw/arche_cicd_finish_action@main
   with:
     pushAndRedeploy: ${{ github.event_name == 'release' && github.event.action == 'published' || inputs.deploy }}
     dockerhubLogin: ${{ secrets.DOCKER_USERNAME }}
@@ -25,17 +25,17 @@ Use with something like:
     cloverPath: build/logs/clover.xml # optional, default "build/logs/clover.xml"
 ```
 
-or if default parameter values are fine:
+most probably:
 
 ```yaml
-- uses: acdh-oeaw/arche_cicd_finish_action@0.1
+- uses: acdh-oeaw/arche_cicd_finish_action@main
   with:
     pushAndRedeploy: ${{ github.event_name == 'release' && github.event.action == 'published' || inputs.deploy }}
     dockerhubLogin: ${{ secrets.DOCKER_USERNAME }}
     dockehubPassword: ${{ secrets.DOCKER_PASSWORD }}
-    imageName: arche-something
-    rancherProject: arche-something
-    rancherNamespace: arche-something
+    imageName: $RANCHER_NAMESPACE
+    rancherProject: $RANCHER_PROJECT
+    rancherNamespace: $RANCHER_NAMESPACE
     rancherToken: ${{ secrets.RANCHERTOKEN }}
     coverallsToken: ${{ secrets.coverallsToken }}
 ```
