@@ -42,7 +42,7 @@ runs:
     shell: bash
     run: docker push "acdhch/${{ inputs.imageName }}:${{ inputs.imageTag }}"
   - name: redeploy on rancher
-    if: inputs.pushAndRedeploy
+    if: ${{ inputs.pushAndRedeploy && inputs.rancherToken != '' }}
     shell: bash
     run: |
       BASE_URL=`curl -s -H "Authorization: Bearer ${{ inputs.rancherToken }}" "${{ inputs.rancherBaseUrl }}/projects" | jq -r ".data[] | select(.name == \"${{ inputs.rancherProject }}\") | .links.workloads"`
