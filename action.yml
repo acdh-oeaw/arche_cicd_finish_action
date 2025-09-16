@@ -23,6 +23,8 @@ inputs:
     required: false
   rancherToken:
     required: false
+  kubectlConfig:
+    required: false
   coverallsToken:
     required: false
   cloverPath:
@@ -42,7 +44,7 @@ runs:
     shell: bash
     run: docker push "acdhch/${{ inputs.imageName }}:${{ inputs.imageTag }}"
   - name: redeploy on rancher
-    if: ${{ inputs.pushAndRedeploy && (inputs.rancherToken != '' || secrets.KUBE_CONFIG != '') }}
+    if: ${{ inputs.pushAndRedeploy && (inputs.rancherToken != '' || inputs.kubectlConfig != '') }}
     shell: bash
     run: |
       if [ "${{ inputs.rancherToken}}" != "" ] ; then
@@ -51,7 +53,7 @@ runs:
       else
         touch kubectl.cfg
         chmod 600 kubectl.cfg
-        echo ${{ secrets.KUBE_CONFIG }} | base64 --decode >> kubectl.cfg
+        echo ${{ inputs.kubectlConfig }} | base64 --decode >> kubectl.cfg
         kubectl --kubeconfig=kubectl.cfg --namespace ${{ inputs.rancherNamespace }} rollout restart deployment/${{ inputs.rancherNamespace }}
       fi
   - name: coveralls
