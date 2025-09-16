@@ -42,11 +42,18 @@ runs:
     shell: bash
     run: docker push "acdhch/${{ inputs.imageName }}:${{ inputs.imageTag }}"
   - name: redeploy on rancher
-    if: ${{ inputs.pushAndRedeploy && inputs.rancherToken != '' }}
+    if: ${{ inputs.pushAndRedeploy && (inputs.rancherToken != '' || secrets.KUBE_CONFIG != '') }}
     shell: bash
     run: |
-      BASE_URL=`curl -s -H "Authorization: Bearer ${{ inputs.rancherToken }}" "${{ inputs.rancherBaseUrl }}/projects" | jq -r ".data[] | select(.name == \"${{ inputs.rancherProject }}\") | .links.workloads"`
-      curl -i -X POST -H "Authorization: Bearer ${{ inputs.rancherToken }}" "$BASE_URL/deployment:${{ inputs.rancherNamespace }}:${{ inputs.rancherNamespace }}?action=redeploy"
+      if [ "${{ inputs.rancherToken}}" != "" ] ; then
+        BASE_URL=`curl -s -H "Authorization: Bearer ${{ inputs.rancherToken }}" "${{ inputs.rancherBaseUrl }}/projects" | jq -r ".data[] | select(.name == \"${{ inputs.rancherProject }}\") | .links.workloads"`
+        curl -i -X POST -H "Authorization: Bearer ${{ inputs.rancherToken }}" "$BASE_URL/deployment:${{ inputs.rancherNamespace }}:${{ inputs.rancherNamespace }}?action=redeploy"
+      else
+        touch kubectl.cfg
+        chmod 600 kubectl.cfg
+        echo ${{ secrets.KUBE_CONFIG }} | base64 --decode >> kubectl.cfg
+        kubectl --kubeconfig=kubectl.cfg --namespace ${{ inputs.rancherNamespace }} rollout restart deployment/${{ inputs.rancherNamespace }}
+      fi
   - name: coveralls
     if: ${{ inputs.coverallsToken != '' }}
     shell: bash
