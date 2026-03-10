@@ -20,7 +20,7 @@ Use with something like:
     rancherBaseUrl: https://rancher.acdh-dev.oeaw.ac.at/v3 # optional
     rancherProject: arche-something
     rancherNamespace: arche-something
-    rancherToken: ${{ secrets.RANCHERTOKEN }}
+    kubectlConfig: ${{ secrets.KUBE_CONFIG }}
     coverallsToken: ${{ secrets.coverallsToken }}
     cloverPath: build/logs/clover.xml # optional, default "build/logs/clover.xml"
 ```
@@ -36,6 +36,6 @@ most probably:
     imageName: $RANCHER_NAMESPACE
     rancherProject: $RANCHER_PROJECT
     rancherNamespace: $RANCHER_NAMESPACE
-    rancherToken: ${{ secrets.RANCHERTOKEN }}
+    kubectlConfig: ${{ secrets.KUBE_CONFIG }}
     coverallsToken: ${{ secrets.coverallsToken }}
 ```
