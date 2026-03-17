@@ -53,7 +53,7 @@ runs:
       else
         touch kubectl.cfg
         chmod 600 kubectl.cfg
-        echo "${{ inputs.kubectlConfig }}": | base64 --decode >> kubectl.cfg
+        echo "${{ inputs.kubectlConfig }}" | base64 --decode >> kubectl.cfg
         kubectl --kubeconfig=kubectl.cfg --namespace ${{ inputs.rancherNamespace }} rollout restart deployment/${{ inputs.rancherNamespace }}
       fi
   - name: coveralls
