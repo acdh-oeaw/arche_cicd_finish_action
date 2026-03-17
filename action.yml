@@ -7,7 +7,7 @@ inputs:
     default: false
   dockerhubLogin:
     required: false
-  dockehubPassword:
+  dockerhubPassword:
     required: false
   imageName:
     required: false
@@ -38,7 +38,7 @@ runs:
     uses: docker/login-action@v3
     with:
       username: ${{ inputs.dockerhubLogin }}
-      password: ${{ inputs.dockehubPassword }}
+      password: ${{ inputs.dockerhubPassword }}
   - name: push to docker hub
     if: inputs.pushAndRedeploy
     shell: bash
@@ -53,7 +53,7 @@ runs:
       else
         touch kubectl.cfg
         chmod 600 kubectl.cfg
-        echo ${{ inputs.kubectlConfig }} | base64 --decode >> kubectl.cfg
+        echo "${{ inputs.kubectlConfig }}": | base64 --decode >> kubectl.cfg
         kubectl --kubeconfig=kubectl.cfg --namespace ${{ inputs.rancherNamespace }} rollout restart deployment/${{ inputs.rancherNamespace }}
       fi
   - name: coveralls

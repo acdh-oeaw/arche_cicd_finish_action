@@ -14,7 +14,7 @@ Use with something like:
   with:
     pushAndRedeploy: ${{ github.event_name == 'release' && github.event.action == 'published' || inputs.deploy }}
     dockerhubLogin: ${{ secrets.DOCKER_USERNAME }}
-    dockehubPassword: ${{ secrets.DOCKER_PASSWORD }}
+    dockerhubPassword: ${{ secrets.DOCKER_PASSWORD }}
     imageName: arche-something
     imageTag: latest # optional, default "latest"
     rancherBaseUrl: https://rancher.acdh-dev.oeaw.ac.at/v3 # optional
@@ -32,7 +32,7 @@ most probably:
   with:
     pushAndRedeploy: ${{ github.event_name == 'release' && github.event.action == 'published' || inputs.deploy }}
     dockerhubLogin: ${{ secrets.DOCKER_USERNAME }}
-    dockehubPassword: ${{ secrets.DOCKER_PASSWORD }}
+    dockerhubPassword: ${{ secrets.DOCKER_PASSWORD }}
     imageName: $RANCHER_NAMESPACE
     rancherProject: $RANCHER_PROJECT
     rancherNamespace: $RANCHER_NAMESPACE
